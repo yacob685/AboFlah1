@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700&display=swap" rel="stylesheet">
+  <title>AboFlah Celebration</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box }
+   body {
+  zoom: 67%;
+}
+ html, body {
+      width: 100vw; height: 100vh;
+      overflow: hidden;
+      background: #f9f9f9;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Overlay */
+    #start-overlay {
+      position:absolute; top:0; left:0;
+      width:100%; height:100%;
+      background:rgba(0,0,0,0.7);
+      display:flex; align-items:center; justify-content:center;
+      z-index:50;
+    }
+
+    #start-overlay button {
+      padding:1rem 2rem;
+      font-size:1.25rem;
+      background:#e91e63; color:#fff;
+      border:none; border-radius:4px;
+      cursor:pointer;
+    }
+.channel-header {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  padding: 60px; /* 20px * 3 */
+  border-radius: 24px; /* 8px * 3 */
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1); /* 2px and 5px * 3 */
+  z-index: 5;
+}
+
+.channel-header .avatar {
+  width: 240px; /* 80px * 3 */
+  height: 240px; /* 80px * 3 */
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 60px; /* 20px * 3 */
+}
+
+.channel-info h1 {
+  font-size: 72px; /* 24px * 3 */
+  color: #333;
+}
+
+.sub-count {
+  margin-top: 15px; /* 5px * 3 */
+  font-size: 54px; /* 18px * 3 */
+  color: #666;
+}
+
+
+    #confetti-canvas {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    #fireworks {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('thanks.gif') center center / cover no-repeat;
+      opacity: 0;
+      transition: opacity 1s ease-in;
+      z-index: 8;
+      pointer-events: none;
+    }
+
+    #congrats {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(1);
+      font-size: 5rem;
+      font-weight: bold;
+      color: #B59410;
+      font-family: 'Cairo', sans-serif;
+      opacity: 0;
+      letter-spacing: 0.25em;
+      white-space: nowrap;
+      z-index: 99;
+    }
+
+    @keyframes heartfeltBounce {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); }
+      30% { transform: translate(-50%, -50%) scale(1.2); }
+      50% { transform: translate(-50%, -50%) scale(1.1); }
+      70% { transform: translate(-50%, -50%) scale(1.3); }
+    }
+
+    .heartfelt-glow {
+      animation: heartfeltBounce 1.2s ease-in-out infinite;
+    }
+
+    audio {
+      position:absolute; width:1px; height:1px;
+      opacity:0; overflow:hidden;
+    }
+
+    /* === Gallery Animation === */
+/* Gallery container: 5 columns, auto rows, fixed max height for 3 rows */
+/* Gallery container: 5 columns, auto rows, fixed max height for 3 rows */
+/* ====== CSS ====== */
+#gallery {
+  position: absolute;
+  top: 0; left: 0;
+  margin: 30px;
+  border-collapse: collapse;
+  visibility: hidden;
+  z-index: 60;            /* above overlay */
+}
+#gallery.show {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity 0.5s ease-in;
+}
+#gallery td {
+  padding: 5px;
+  width: calc((100vw - 60px - 40px) / 5);
+}
+#gallery video,
+#gallery #img1,
+#gallery #img2 {
+  display: block;
+  width: 550px;   /* fixed width for both images and videos */
+  height: 670px;  /* fixed height for uniformity */
+  object-fit: cover; /* crop if needed */
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  opacity: 0;
+  margin-left: auto;
+  margin-right: auto;
+  animation: fadeIn 1s ease forwards;
+}
+/* individual spacing */
+
+/* one-by-one fadeIn */
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+
+#thanksMessage {
+  position: absolute;
+  top: calc(50% + 80px); /* slightly below the bouncing text */
+  left: 50%;
+  margin-top: 50px;
+  transform: translateX(-50%);
+  font-size: 2rem;
+  font-weight: 600;
+  color: #B59410;
+  font-family: 'Cairo', sans-serif;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+  white-space: nowrap;
+  z-index: 99;
+}
+
+#congrats,
+#thanksMessage {
+  background: rgba(1, 1, 1, 1); /* translucent black */
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  backdrop-filter: blur(4px); /* optional: glass effect */
+}
+
+
+#celebrationImage {
+  position: absolute;
+  top: 250px;           /* adjust up/down as you like */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 98;
+  width:900px;
+  height:300px;
+    transition: opacity 1s ease-in-out;
+
+}
+
+
+#celebrationImage.show {
+  opacity: 1;
+}
+
+/* === Second Image === */
+#followImage {
+  position: absolute;
+  top: 990px;           /* adjust this to wherever you want it below the first */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;         /* above other elements */
+  width: 900px;
+  height: 300px;
+  opacity: 0;           /* start hidden */
+  transition: opacity 1s ease-in-out;
+}
+
+#followImage.show {
+  opacity: 1;
+}
+
+
+.thank-word {
+  position: absolute;
+  font-size: 3rem;
+  font-family: 'Cairo', sans-serif;
+  color: #FFD700;
+  text-shadow: 0 0 5px black;
+  opacity: 0;
+  white-space: nowrap;
+  animation: flyIn 5s ease forwards;
+  pointer-events: none;
+  z-index: 150;
+}
+
+@keyframes flyIn {
+  0% {
+    transform: translateY(50px) scale(0.8);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100px) scale(1);
+    opacity: 0;
+  }
+}
+
+/* For note1: 21 characters */
+#note {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  font-family: 'Cairo', sans-serif;
+  font-size: 2rem;
+  font-weight: bold;
+  color: red;
+  white-space: nowrap;
+  border-right: 2px solid red; /* typing cursor */
+  overflow: hidden;
+  width: 0;
+  user-select: none;
+  z-index: 9999;
+  opacity: 1;
+  animation: typing21 3s steps(21, end) forwards, blinkCaret 0.75s step-end infinite;
+}
+
+@keyframes typing21 {
+  from { width: 0; }
+  to { width: 21ch; }
+}
+
+/* For note2: 53 characters */
+#note2 {
+  position: fixed;
+  top: 60px;
+  right: 20px;
+  font-family: 'Cairo', sans-serif;
+  font-size: 2rem;
+  font-weight: bold;
+  color: red;
+  white-space: nowrap;
+  border-right: 2px solid red;
+  overflow: hidden;
+  width: 0;
+  user-select: none;
+  z-index: 9999;
+  opacity: 1;
+  animation: typing53 3s steps(53, end) forwards, blinkCaret 0.75s step-end infinite;
+}
+
+@keyframes typing53 {
+  from { width: 0; }
+  to { width: 53ch; }
+}
+
+@keyframes blinkCaret {
+  50% { border-color: transparent; }
+  100% { border-color: red; }
+}
+
+.fade-out {
+  animation: fadeOut 2s ease forwards;
+  animation-delay: 11s;
+}
+
+.fade-out-119 {
+  animation: fadeOut 2s ease forwards;
+  animation-delay: 119s;
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+  }
+}
+
+
+.hidden-img {
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+
+  </style>
+</head>
+<body>
+
+  <div id="start-overlay">
+    <button id="startBtn">اضغط للبدء | Click to Begin</button>
+  </div>
+
+
+
+<div id="note"> بعد البدء رجاءً انتظر ١١ ثانية  </div>
+
+
+<div id="note2" style="opacity: 0;"> انتظر رجاءً هنالك مفاجأة ثانية بعد انتهاء العد التنازلي هذا: <span id="note2-timer">119</span> ثانية </div>
+
+
+  <div class="channel-header">
+    <img src="AboFlah.jpg" alt="AboFlah Logo" class="avatar">
+    <div class="channel-info">
+      <h1>AboFlah</h1>
+      <div class="sub-count" id="subCount">0 subscribers</div>
+    </div>
+  </div>
+
+  <audio id="bgAudio"   src="Cinematic.mp3" loop playsinline></audio>
+  <audio id="fireAudio" src="Motion.mp3"></audio>
+  <audio id="cheerAudio" src="TheKing.mp3"></audio>
+
+  <canvas id="confetti-canvas"></canvas>
+  <div id="fireworks"></div>
+  <div id="congrats"></div>
+    <div id="thanksMessage">❤❤شكرا على مجهودك و تعبك من اجلنا</div>
+
+<!-- Second image, initially hidden -->
+<img
+  src="AboFlahOriginal.png"
+  alt="Extra Celebration"
+  id="followImage"
+  class="hidden-img"
+/>
+
+
+<!-- ========= HTML ========= -->
+<table id="gallery" class="hidden">
+  <tbody>
+   
+    
+      <tr>
+      <td><video src="AboFlah.mp4"  muted autoplay loop playsinline></video></td>
+      <td><video src="AboFlah1.mp4" muted autoplay loop playsinline></video></td>
+      <td><video src="AboFlah2.mp4" muted autoplay loop playsinline></video></td>
+      <td><video src="AboFlah3.mp4" muted autoplay loop playsinline></video></td>
+      <td><video src="AboFlah4.mp4" muted autoplay loop playsinline></video></td>
+      </tr>
+      <tr>
+      <td><video src="AboFlah5.mp4" muted autoplay loop playsinline></video></td>
+      <td><video src="AboFlah6.mp4" muted autoplay loop playsinline></video></td>
+      <td><video src="AboFlah7.mp4" muted autoplay loop playsinline></video></td>
+      <td><video src="AboFlah8.mp4"  muted autoplay loop playsinline></video></td>
+      <td><video src="AboFlah9.mp4"  muted autoplay loop playsinline></video></td>
+
+      </tr>
+      
+  
+    </tr>
+  </tbody>
+</table>
+
+<img src="Original.png"
+     alt="Celebration"
+     id="celebrationImage"
+     class="hidden-img">
+
+
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+  <script>
+    const TARGET   = 50_000_000;
+    const DURATION = 140000;
+    const DELAY    = 11000;
+    let started = false;
+
+    const subElem     = document.getElementById('subCount');
+    const bgAudio     = document.getElementById('bgAudio');
+    const fireAudio   = document.getElementById('fireAudio');
+const cheerAudio = document.getElementById('cheerAudio');
+cheerAudio.loop = true;
+    const fireworksEl = document.getElementById('fireworks');
+    const confCanvas  = document.getElementById('confetti-canvas');
+    const congratsEl  = document.getElementById('congrats');
+    const gallery     = document.getElementById('gallery');
+
+    const confettiIns = confCanvas
+      ? window.confetti.create(confCanvas, { resize: true })
+      : null;
+
+    function fmt(n) {
+      return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+document.getElementById('startBtn').addEventListener('click', () => {
+  const note = document.getElementById('note');
+  note.style.width = '0';    // reset width for re-animation if needed
+  note.style.opacity = '1';
+  // Trigger reflow to restart animation if clicked multiple times
+  void note.offsetWidth;
+  note.style.animation = 'typing21 3s steps(20, end) forwards, blinkCaret 0.75s step-end infinite';
+
+  // Hide after 11 seconds
+  setTimeout(() => {
+    note.style.opacity = '0';
+    note.style.animation = '';
+  }, 11000);
+
+  // Your existing start logic here
+  document.getElementById('start-overlay').style.display = 'none';
+  bgAudio.muted = false;
+  bgAudio.volume = 0.5;
+  bgAudio.play();
+  [ fireAudio, cheerAudio ].forEach(a => {
+    a.load();
+    a.play().catch(() => {}).then(() => {
+      a.pause();
+      a.currentTime = 0;
+    });
+  });
+
+   setTimeout(() => {
+    if (!started) {
+      started = true;
+      animateCount(performance.now());
+    }
+  }, DELAY);
+  
+  // Your new note2 show + countdown at 20 seconds
+  setTimeout(() => {
+    const note2 = document.getElementById('note2');
+    const timerSpan = document.getElementById('note2-timer');
+    
+    note2.style.opacity = '1';
+
+    // Restart typing animation
+    note2.style.animation = 'none';
+    void note2.offsetWidth; // trigger reflow
+    note2.style.animation = 'typing53 3s steps(21, end) forwards, blinkCaret 0.75s step-end infinite';
+
+    // Countdown from 119 to 0 every second
+    let timeLeft = 119;
+    timerSpan.textContent = timeLeft;
+
+    const countdownInterval = setInterval(() => {
+      timeLeft--;
+      timerSpan.textContent = timeLeft;
+      if (timeLeft <= 0) {
+        clearInterval(countdownInterval);
+        note2.classList.add('fade-out-119');
+      }
+    }, 1000);
+
+  }, 13000);
+
+});
+
+function celebrate() {
+  // show GIF & play sounds + confetti + text…
+  fireworksEl.style.opacity = 1;
+  fireAudio.currentTime = 0;
+  cheerAudio.currentTime = 0;
+  fireAudio.play();
+  cheerAudio.play();
+  if (confettiIns) {
+    for (let i = 0; i < 5; i++) {
+      confettiIns({ particleCount:200, spread:160, origin:{ x:Math.random(), y:Math.random()*0.6 } });
+    }
+  }
+  typeCongrats("مبروووك على الخمسيييين مليوووون ");
+
+  // ————— Gallery fade-in —————
+  const gallery = document.getElementById('gallery');
+  if (gallery) {
+    // remove the hidden state, show container
+    gallery.classList.remove('hidden');
+    gallery.classList.add('show');
+
+    // animate only the first 15 <img> or <video>
+    const items = Array.from(gallery.querySelectorAll('img, video'))
+                       .slice(0, 15);
+    items.forEach((el, idx) => {
+      setTimeout(() => {
+        el.style.animation = 'fadeIn 1s ease forwards';
+      }, idx * 1000);
+    });
+  }
+
+  startContinuousThanks();
+
+}
+function typeCongrats(text) {
+  congratsEl.style.opacity = 1;
+  congratsEl.textContent = '';
+  let idx = 0;
+
+  const interval = setInterval(() => {
+    congratsEl.textContent += text[idx++];
+    if (idx === text.length) {
+      clearInterval(interval);
+      congratsEl.classList.add('heartfelt-glow');
+
+      // Show the thank-you text
+      const thanks = document.getElementById('thanksMessage');
+      if (thanks) {
+        thanks.style.opacity = 1;
+      }
+
+      // Show the second image
+      const followImg = document.getElementById('followImage');
+      if (followImg) {
+        setTimeout(() => {
+          followImg.classList.remove('hidden-img');
+          followImg.classList.add('show');
+        }, 500);
+      }
+    }
+  }, 200);
+}
+
+
+    function animateCount(startTime) {
+      function step(now) {
+        const elapsed = now - startTime;
+        const prog    = Math.min(elapsed / DURATION, 1);
+        const curr    = Math.floor(prog * TARGET);
+        subElem.textContent = `${fmt(curr)} subscribers`;
+        if (prog < 1) {
+          requestAnimationFrame(step);
+        } else {
+          const fadeDuration = 500;
+          const startVol     = bgAudio.volume;
+          const fadeStart    = performance.now();
+function fadeStep(ts) {
+  const t = (ts - fadeStart) / fadeDuration;
+  if (t < 1) {
+    bgAudio.volume = startVol * (1 - t);
+    requestAnimationFrame(fadeStep);
+} else {
+  bgAudio.pause();
+
+  // show the image immediately at 50M
+  const img = document.getElementById('celebrationImage');
+  if (img) {
+    img.classList.remove('hidden-img');
+    img.classList.add('show');
+  }
+
+  // now kick off the celebration
+  celebrate();
+}
+
+}
+
+
+          requestAnimationFrame(fadeStep);
+        }
+      }
+
+      requestAnimationFrame(step);
+    }
+
+function startContinuousThanks() {
+  // Start spawning every 500 ms forever
+  setInterval(() => {
+    spawnSingleThanksWord();
+  }, 500);
+}
+
+function spawnSingleThanksWord() {
+const messages = [
+  // First 15 thank-you messages
+  "شكرا لك 🙏",
+  "ممتنون لك 💖",
+  "يا رائع ✨",
+  "انت مميز 🌟",
+  "كل الحب لك ❤️",
+  "💖 شكرا",
+  "❤️ شكرا",
+  "🌟 ممتنون",
+  "👏👏👏",
+  "جزاك الله خيرا 🤲",
+  "تستاهل كل خير 💯",
+  "كل الشكر 🙌",
+  "مع التقدير 🤝",
+  "كل الاحترام 🙏",
+  "عمل جبار 💪",
+
+  // Insert "اعطيني ايفون 😂" 10 times here
+  "اعطيني ايفون 😂",
+  "اعطيني ايفون 😂",
+  "اعطيني ايفون 😂",
+  "اعطيني ايفون 😂",
+  "اعطيني ايفون 😂",
+  "اعطيني ايفون 😂",
+  "اعطيني ايفون 😂",
+  "اعطيني ايفون 😂",
+  "اعطيني ايفون 😂",
+  "اعطيني ايفون 😂",
+
+  // Continue with the rest of the original messages
+  "رائع جدا 🔥",
+  "انت الافضل 🏆",
+  "💫 مبروك",
+  "💝 شكرا بحجم السماء 🌌",
+  "يا غالي 💎",
+  "🌹🌹🌹",
+  "❤️❤️❤️",
+  "فخورون بك 🎉",
+  "الى الامام دائما 🚀",
+  "ممتن لك جدا 🙏",
+  "دمت مبدعاً 🎨",
+  "كل الدعم لك 🤗",
+  "تسلم إيدك 👏",
+  "جزاك الله عنا الخير 🤲",
+  "أنت نجمي المضيء ⭐",
+  "بالتوفيق دائما 🍀",
+  "دمت متألقاً 🌟",
+  "من القلب شكراً 💖",
+  "شكر و تقدير 🙌",
+  "كل الاحترام والتقدير 🤝",
+  "أنت مصدر إلهام 💡",
+  "أحسنت العمل 👌",
+  "أنت قدوة للجميع 🌟",
+  "بارك الله فيك 🤲",
+  "عظيم جداً 💪",
+  "مجهود رائع 👏",
+  "كل الحب و الامتنان ❤️",
+  "يا بطل 🦸‍♂️",
+  "نقدر لك جهدك 🙏",
+  "ممتنون لوجودك 💫",
+  "كل الشكر و التقدير 🙌",
+  "أنت الأفضل دوماً 🏅",
+  "ألف مبروك 🎊",
+  "أنت الفخر 🌟",
+  "تحية احترام 🙏",
+  "شكراً من القلب ❤️",
+  "دمت بخير 😊",
+  "عمل مميز 🌈",
+  "أنت نجم الساحة 🌟",
+  "يا بطل الأبطال 🏆",
+  "أبدعت 👏",
+  "دمت متألقاً دائما 🌟",
+  "شكر خاص لك 💌",
+  "كل الامتنان 🙏",
+  "أنت شخص رائع 🤩",
+  "شكرًا جزيلاً 💖",
+  "تستحق كل التقدير 🥇",
+  "شكراً على جهودك 👏",
+  "كل الحب والتقدير ❤️",
+  "ممتنون لك بشدة 💕",
+  "شكراً على كل شيء 🙏",
+  "أنت رمز العطاء 🎁",
+  "أنت نجمي المتلألئ ✨",
+  "دمت ودام عطاؤك 🌟",
+  "شكرًا على دعمك 🤝",
+  "لك كل الشكر 🙌",
+  "شكرًا لك من القلب ❤️",
+  "شكرًا على مجهودك 💪",
+  "شكراً على العمل الرائع 👏",
+  "دمت في القمة 🏔️",
+  "شكرًا لكونك مميزاً 🌟",
+  "كل الفخر بك 🎖️",
+  "تستاهل كل خير 💯",
+  "كل الاحترام لك 🙏",
+  "شكرًا على كل جهودك 👏",
+  "أنت مبدع بحق 🎨",
+  "كل التقدير والاحترام 🤝",
+  "شكراً لتفانيك 💖",
+  "شكراً لعملك الدؤوب 💪",
+  "لك مني كل الشكر 🙏",
+  "أنت رائع جداً 🌟",
+  "شكرًا على تعاونك 🤝",
+  "دمت فخوراً بنفسك 💪",
+  "أنت رمز النجاح 🏆",
+  "كل الحب و الشكر ❤️",
+  "شكراً لك يا غالي 💎",
+  "أحسنت صنعاً 👏",
+  "شكراً على مساهمتك 🤗",
+  "شكرًا من القلب ❤️",
+  "كل الشكر على المجهود 👏",
+  "أنت محبوب ومقدر 💖",
+  "ألف شكر 🙏",
+  "دمت متفوقاً 🌟",
+  "شكرًا لدعمك الدائم 🤝",
+  "يا نجم السماء 🌟",
+  "أنت متميز 💫",
+  "شكراً لعملك الرائع 👏",
+  "تحية شكر 🙌",
+  "دمت بخير وعافية 😊",
+  "شكراً على كل الدعم 🤗",
+  "شكرًا على تفانيك 💖",
+  "أنت الأفضل فينا 🏅",
+  "لك مني كل الامتنان 🙏",
+  "شكرًا على حبك واهتمامك ❤️",
+  "كل التحية والتقدير 🤝",
+  "أنت رائع بلا حدود 🌈",
+  "شكراً لك من أعماق القلب 💖"
+];
+
+
+
+  const msg = messages[Math.floor(Math.random() * messages.length)];
+
+  const span = document.createElement('span');
+  span.className = 'thank-word';
+  span.textContent = msg;
+
+  // Random position
+  const top = Math.random() * 80;   // %
+  const left = Math.random() * 80;  // %
+
+  span.style.top = `${top}vh`;
+  span.style.left = `${left}vw`;
+
+  // Append to body
+  document.body.appendChild(span);
+
+  // Remove after animation completes
+  setTimeout(() => {
+    span.remove();
+  }, 5000); // matches animation duration
+}
+
+  </script>
+</body>
+</html>
