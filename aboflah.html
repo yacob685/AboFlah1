@@ -22,49 +22,69 @@
     }
 
     /* Overlay */
-    #start-overlay {
-      position:absolute; top:0; left:0;
-      width:100%; height:100%;
-      background:rgba(0,0,0,0.7);
-      display:flex; align-items:center; justify-content:center;
-      z-index:50;
-    }
+   #start-overlay {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+}
 
-    #start-overlay button {
-      padding:1rem 2rem;
-      font-size:1.25rem;
-      background:#e91e63; color:#fff;
-      border:none; border-radius:4px;
-      cursor:pointer;
-    }
+#start-overlay.fade-out {
+  opacity: 0;
+  transform: scale(1.1);
+  pointer-events: none;
+}
+
+/* your existing avatar rules */
+.channel-header .avatar {
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* updated container and auto-margin rules */
 .channel-header {
   display: flex;
   align-items: center;
   background: #fff;
-  padding: 60px; /* 20px * 3 */
-  border-radius: 24px; /* 8px * 3 */
-  box-shadow: 0 6px 15px rgba(0,0,0,0.1); /* 2px and 5px * 3 */
+  padding: 60px;
+  border-radius: 24px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
   z-index: 5;
+
+  /* 1) center everything by default */
+  justify-content: center;
 }
 
-.channel-header .avatar {
-  width: 240px; /* 80px * 3 */
-  height: 240px; /* 80px * 3 */
-  border-radius: 50%;
-  object-fit: cover;
-  margin-right: 60px; /* 20px * 3 */
+/* 2) push title/count to the right of the left avatar */
+.channel-header > .avatar:first-child {
+  margin-right: 60px;
 }
 
+/* 3) push title/count to the left of the right avatar */
+.channel-header > .avatar:last-child {
+  margin-left: 60px;
+}
+
+/* your existing info styles */
 .channel-info h1 {
-  font-size: 72px; /* 24px * 3 */
+  font-size: 72px;
   color: #333;
 }
 
 .sub-count {
-  margin-top: 15px; /* 5px * 3 */
-  font-size: 54px; /* 18px * 3 */
+  margin-top: 15px;
+  font-size: 54px;
   color: #666;
+  text-align:center;
 }
+
 
 
     #confetti-canvas {
@@ -270,13 +290,14 @@
   width: 0;
   user-select: none;
   z-index: 9999;
-  opacity: 1;
+  opacity: 0;
+  transition: opacity 1s ease;
   animation: typing21 3s steps(21, end) forwards, blinkCaret 0.75s step-end infinite;
 }
 
 @keyframes typing21 {
   from { width: 0; }
-  to { width: 21ch; }
+  to { width: 28ch; }
 }
 
 /* For note2: 53 characters */
@@ -300,7 +321,7 @@
 
 @keyframes typing53 {
   from { width: 0; }
-  to { width: 134ch; }
+  to { width: 147ch; }
 }
 
 @keyframes blinkCaret {
@@ -315,7 +336,7 @@
 
 .fade-out-119 {
   animation: fadeOut 2s ease forwards;
-  animation-delay: 119s;
+  animation-delay: 134;
 }
 
 @keyframes fadeOut {
@@ -323,6 +344,107 @@
     opacity: 0;
   }
 }
+
+.gift-box {
+  position: relative;
+  width: 90%;
+  height: 90%;
+  background: linear-gradient(to bottom, #cc0000, #990000);
+  border-radius: 10px;
+  box-shadow: 0 0 40px #ff1a1a;
+  cursor: pointer;
+  animation: bounce 10s infinite ease-in-out;
+  transform-style: preserve-3d;
+}
+
+.lid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  background: linear-gradient(to bottom, #ff3333, #cc0000);
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  transform-origin: top center;
+  transition: transform 0.6s ease;
+  z-index: 3;
+}
+
+.ribbon {
+  position: absolute;
+  background: gold;
+  transition: all 10s ease-in-out;
+  z-index: 4;
+}
+
+.ribbon.horizontal {
+  width: 100%;
+  height: 20px;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  border-radius: 5px;
+}
+
+.ribbon.vertical {
+  width: 20px;
+  height: 100%;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  border-radius: 5px;
+}
+
+.untied.horizontal {
+  width: 0;
+  opacity: 0;
+}
+
+.untied.vertical {
+  height: 0;
+  opacity: 0;
+}
+
+.sparkles {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 30px;
+  height: 30px;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  animation: bounce 10s infinite ease-in-out;
+  z-index: 10; /* above ribbon */
+}
+
+.sparkles::before {
+  content: "🎀";
+  font-size: 250px;
+  position: fixed ;
+  top: -120px;
+  left: -155px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.sparkles.animate::before {
+  animation: burst 10s ease-out forwards;
+  opacity: 1;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: scale(1) translateY(0); }
+  50%      { transform: scale(1.05) translateY(-5px); }
+}
+
+@keyframes burst {
+  0%   { transform: scale(0.5); opacity: 1; }
+  80%  { transform: scale(1); opacity: 1; }
+  120% { transform: scale(1); opacity: 0; top: -80px; left: -1200px; }
+}
+
 
 
 .hidden-img {
@@ -335,24 +457,27 @@
 </head>
 <body>
 
-  <div id="start-overlay">
-    <button id="startBtn">اضغط للبدء | Click to Begin</button>
+<div id="start-overlay">
+  <div class="gift-box" id="giftBox">
+    <div class="lid" id="lid"></div>
+    <div class="ribbon horizontal" id="ribbonH"></div>
+    <div class="ribbon vertical" id="ribbonV"></div>
+    <div class="sparkles" id="sparkles"></div>
   </div>
+</div>
+
+<audio id="popSound" src="Gift.mp3" preload="auto"></audio>
 
 
-
-<div id="note"> بعد البدء رجاءً انتظر ١١ ثانية  </div>
-
-<div id="note2" style="opacity: 0;"> 😔 انتظر رجاءً هنالك مفاجأة ثانية بعد انتهاء العد التنازلي هذا. بعد هذا ارجوك ان تستمع لنهاية المسيقى و تذكر بدايتك الى الان و انت تشاهد المقاطع. تذكر نفسك: <span id="note2-timer">119</span> ثانية </div>
-
-
-
+<div id="note">ملاحظة: بعد البدء رجاءً انتظر ١١ ثانية  </div> <div id="note2" style="opacity: 0;">❤ ملاحظة: يرجى الانتظار، هناك مفاجأة ثانية بعد انتهاء هذا العد التنازلي . بعد هذا، أرجوك أن تستمع إلى نهاية الموسيقى وتذكر بدايتك حتى الآن وأنت تشاهد المقاطع. تذكر نفسك : <span id="note2-timer">134</span> ثانية </div>
   <div class="channel-header">
     <img src="AboFlah.jpg" alt="AboFlah Logo" class="avatar">
     <div class="channel-info">
-      <h1>AboFlah</h1>
+      <h1>AboFlah - GAMES \فله </h1>
       <div class="sub-count" id="subCount">0 subscribers</div>
     </div>
+    <img src="Original.png" alt="AboFlah Right" class="avatar right-avatar">
+
   </div>
 
   <audio id="bgAudio"   src="Cinematic.mp3" loop playsinline></audio>
@@ -399,7 +524,7 @@
   </tbody>
 </table>
 
-<img src="Original.png"
+<img src="Original1.png"
      alt="Celebration"
      id="celebrationImage"
      class="hidden-img">
@@ -407,91 +532,120 @@
 
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
   <script>
-    const TARGET   = 50_000_000;
-    const DURATION = 140000;
-    const DELAY    = 11000;
-    let started = false;
+const TARGET   = 50_000_000;
+const DURATION = 137000;
+const DELAY    = 10700;
+let started = false;
 
-    const subElem     = document.getElementById('subCount');
-    const bgAudio     = document.getElementById('bgAudio');
-    const fireAudio   = document.getElementById('fireAudio');
-const cheerAudio = document.getElementById('cheerAudio');
+const subElem     = document.getElementById('subCount');
+const bgAudio     = document.getElementById('bgAudio');
+const fireAudio   = document.getElementById('fireAudio');
+const cheerAudio  = document.getElementById('cheerAudio');
 cheerAudio.loop = true;
-    const fireworksEl = document.getElementById('fireworks');
-    const confCanvas  = document.getElementById('confetti-canvas');
-    const congratsEl  = document.getElementById('congrats');
-    const gallery     = document.getElementById('gallery');
 
-    const confettiIns = confCanvas
-      ? window.confetti.create(confCanvas, { resize: true })
-      : null;
+const fireworksEl = document.getElementById('fireworks');
+const confCanvas  = document.getElementById('confetti-canvas');
+const congratsEl  = document.getElementById('congrats');
+const gallery     = document.getElementById('gallery');
 
-    function fmt(n) {
-      return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+const confettiIns = confCanvas
+  ? window.confetti.create(confCanvas, { resize: true })
+  : null;
+
+function fmt(n) {
+  return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+document.getElementById('giftBox').addEventListener('click', () => {
+  // Untie ribbons
+  document.getElementById('ribbonH').classList.add('untied');
+  document.getElementById('ribbonV').classList.add('untied');
+
+  // Lid flip
+  const lid = document.getElementById('lid');
+  if (lid) lid.style.transform = 'rotateX(-100deg) translateY(-20px)';
+
+  // Trigger sparkle burst once on click
+  const sparkles = document.getElementById('sparkles');
+  if (sparkles) {
+    sparkles.classList.remove('animate'); // reset animation
+    void sparkles.offsetWidth;             // trigger reflow
+    sparkles.classList.add('animate');    // start burst animation
+  }
+
+  // Play pop sound (if exists)
+  const popSound = document.getElementById('popSound');
+  if (popSound) popSound.play().catch(() => {});
+
+  // Start fade out and note animations **after** 10 seconds
+  setTimeout(() => {
+    const overlay = document.getElementById('start-overlay');
+    if (overlay) {
+      overlay.classList.add('fade-out');
+      setTimeout(() => {
+        overlay.style.display = 'none';
+      }, 10000);
     }
-
-document.getElementById('startBtn').addEventListener('click', () => {
   const note = document.getElementById('note');
-  note.style.width = '0';    // reset width for re-animation if needed
-  note.style.opacity = '1';
-  // Trigger reflow to restart animation if clicked multiple times
-  void note.offsetWidth;
-  note.style.animation = 'typing21 3s steps(20, end) forwards, blinkCaret 0.75s step-end infinite';
+    if (note) {
+      note.style.width = '0';
+      note.style.opacity = '1';
+      void note.offsetWidth;
+      note.style.animation = 'typing21 3s steps(20, end) forwards, blinkCaret 0.75s step-end infinite';
 
-  // Hide after 11 seconds
-  setTimeout(() => {
-    note.style.opacity = '0';
-    note.style.animation = '';
-  }, 11000);
-
-  // Your existing start logic here
-  document.getElementById('start-overlay').style.display = 'none';
-  bgAudio.muted = false;
-  bgAudio.volume = 0.5;
-  bgAudio.play();
-  [ fireAudio, cheerAudio ].forEach(a => {
-    a.load();
-    a.play().catch(() => {}).then(() => {
-      a.pause();
-      a.currentTime = 0;
-    });
-  });
-
-   setTimeout(() => {
-    if (!started) {
-      started = true;
-      animateCount(performance.now());
+      setTimeout(() => {
+        note.style.opacity = '0';
+        note.style.animation = '';
+      }, 11000);
     }
-  }, DELAY);
-  
-  // Your new note2 show + countdown at 20 seconds
-  setTimeout(() => {
-    const note2 = document.getElementById('note2');
-    const timerSpan = document.getElementById('note2-timer');
-    
-    note2.style.opacity = '1';
 
-    // Restart typing animation
-    note2.style.animation = 'none';
-    void note2.offsetWidth; // trigger reflow
-    note2.style.animation = 'typing53 3s steps(21, end) forwards, blinkCaret 0.75s step-end infinite';
+ 
+      bgAudio.muted = false;
+      bgAudio.volume = 0.5;
+      bgAudio.play();
+      [fireAudio, cheerAudio].forEach(a => {
+        a.load();
+        a.play().catch(() => {}).then(() => {
+          a.pause();
+          a.currentTime = 0;
+        });
+      });
 
-    // Countdown from 119 to 0 every second
-    let timeLeft = 119;
+      setTimeout(() => {
+        if (!started) {
+          started = true;
+          animateCount(performance.now());
+        }
+      }, DELAY);
+
+setTimeout(() => {
+  const note2     = document.getElementById('note2');
+  const timerSpan = document.getElementById('note2-timer');
+
+  // 1) Show and type out note2
+  note2.style.opacity   = '1';
+  note2.style.animation = 'none';
+  void note2.offsetWidth;
+  note2.style.animation = 'typing53 3s steps(53, end) forwards, blinkCaret 0.75s step-end infinite';
+
+  // 2) **Schedule fade** by adding the class *now*, CSS will wait 119 s
+  note2.classList.add('fade-out-119');
+
+  // 3) Start the JS countdown just to update the number
+  let timeLeft = 134;
+  timerSpan.textContent = timeLeft;
+  const countdownInterval = setInterval(() => {
+    timeLeft--;
     timerSpan.textContent = timeLeft;
+    if (timeLeft <= 0) {
+      clearInterval(countdownInterval);
+      // NO fade class here any more
+    }
+  }, 1000);
+}, 13000);
 
-    const countdownInterval = setInterval(() => {
-      timeLeft--;
-      timerSpan.textContent = timeLeft;
-      if (timeLeft <= 0) {
-        clearInterval(countdownInterval);
-        note2.classList.add('fade-out-119');
-      }
-    }, 1000);
-
-  }, 13000);
-
-});
+    }, 10000); // Delay to allow ribbon animation
+  });
 
 function celebrate() {
   // show GIF & play sounds + confetti + text…
@@ -586,6 +740,8 @@ function fadeStep(ts) {
 
   // now kick off the celebration
   celebrate();
+  document.getElementById('note2').style.display = 'none';
+
 }
 
 }
